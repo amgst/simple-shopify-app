@@ -25,6 +25,27 @@ app.use((req, res, next) => {
   next();
 });
 
+// Content Security Policy to allow Shopify Admin embedding (App Bridge)
+app.use((req, res, next) => {
+  const shopifyAdminOrigins = [
+    'https://admin.shopify.com',
+    'https://*.myshopify.com'
+  ];
+  res.setHeader('Content-Security-Policy', [
+    "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:",
+    // Allow being framed by Shopify Admin and storefront
+    `frame-ancestors ${shopifyAdminOrigins.join(' ')} 'self'`,
+  ].join('; '));
+  next();
+});
+
+// Expose minimal client config for App Bridge (reads env SHOPIFY_API_KEY)
+app.get('/app-config.js', (req, res) => {
+  const apiKey = process.env.SHOPIFY_API_KEY || process.env.SHOPIFY_CLIENT_ID || '';
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.send(`window.appConfig = { apiKey: ${JSON.stringify(apiKey)} };`);
+});
+
 // Initialize SQLite database
 // Use writable path on serverless (Vercel) which only allows writes to /tmp
 const databaseFilePath = process.env.DATABASE_PATH || (process.env.VERCEL ? '/tmp/app.db' : path.join(__dirname, 'app.db'));
