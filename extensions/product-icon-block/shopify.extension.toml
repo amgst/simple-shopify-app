@@ -1,0 +1,4 @@
+# Shopify Theme App Extension configuration
+name = "Product Icon Block"
+handle = "product-icon-block"
+type = "theme"

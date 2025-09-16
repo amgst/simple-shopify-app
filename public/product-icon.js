@@ -1,7 +1,11 @@
 
 // public/product-icon.js - Frontend script for product pages
 (function() {
-    const shop = window.Shopify?.shop || 'demo-shop.myshopify.com';
+    const blockRoot = document.getElementById('product-icon-app');
+    const blockShop = blockRoot?.getAttribute('data-shop');
+    const blockIconUrl = blockRoot?.getAttribute('data-icon-url');
+    const blockIconPosition = blockRoot?.getAttribute('data-icon-position');
+    const shop = blockShop ? `${blockShop}.myshopify.com` : (window.Shopify?.shop || 'demo-shop.myshopify.com');
 
     // Determine app base URL from the current script tag to avoid hardcoding
     const currentScript = document.currentScript || (function() {
@@ -12,7 +16,13 @@
     const url = new URL(scriptSrc, window.location.href);
     const appBaseUrl = `${url.protocol}//${url.host}`;
 
-    // Fetch icon settings
+    // Decide icon config: prefer Theme App Block settings when provided
+    if (blockIconUrl) {
+        addIconToProductPage(blockIconUrl, blockIconPosition || 'top-right');
+        return;
+    }
+
+    // Otherwise fetch settings from app backend
     fetch(`${appBaseUrl}/api/icon/${shop.replace('.myshopify.com', '')}`)
         .then(response => response.json())
         .then(data => {

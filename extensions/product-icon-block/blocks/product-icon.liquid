@@ -1,0 +1,39 @@
+{% comment %} Product Icon App Block {% endcomment %}
+<div
+  id="product-icon-app"
+  data-icon-url="{{ block.settings.icon_url | escape }}"
+  data-icon-position="{{ block.settings.icon_position }}"
+  data-shop="{{ shop.permanent_domain | split: '.myshopify.com' | first }}"
+>
+</div>
+<script src="https://simple-shopify-app-2lhq.vercel.app/product-icon.js" defer></script>
+
+{% schema %}
+{
+  "name": "Product Icon",
+  "target": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "url",
+      "id": "icon_url",
+      "label": "Icon URL"
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "Icon position",
+      "default": "top-right",
+      "options": [
+        { "label": "Top Right", "value": "top-right" },
+        { "label": "Top Left", "value": "top-left" },
+        { "label": "Bottom Right", "value": "bottom-right" },
+        { "label": "Bottom Left", "value": "bottom-left" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Product Icon" }
+  ]
+}
+{% endschema %}
