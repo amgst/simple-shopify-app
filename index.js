@@ -12,6 +12,19 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
+// Minimal CORS for storefront GET to fetch icon settings
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path.startsWith('/api/icon/')) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') {
+      return res.status(204).end();
+    }
+  }
+  next();
+});
+
 // Initialize SQLite database
 // Use writable path on serverless (Vercel) which only allows writes to /tmp
 const databaseFilePath = process.env.DATABASE_PATH || (process.env.VERCEL ? '/tmp/app.db' : path.join(__dirname, 'app.db'));

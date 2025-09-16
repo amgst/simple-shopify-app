@@ -2,9 +2,18 @@
 // public/product-icon.js - Frontend script for product pages
 (function() {
     const shop = window.Shopify?.shop || 'demo-shop.myshopify.com';
-    
+
+    // Determine app base URL from the current script tag to avoid hardcoding
+    const currentScript = document.currentScript || (function() {
+        const scripts = document.getElementsByTagName('script');
+        return scripts[scripts.length - 1];
+    })();
+    const scriptSrc = currentScript && currentScript.src ? currentScript.src : '';
+    const url = new URL(scriptSrc, window.location.href);
+    const appBaseUrl = `${url.protocol}//${url.host}`;
+
     // Fetch icon settings
-    fetch(`https://your-app-url.com/api/icon/${shop.replace('.myshopify.com', '')}`)
+    fetch(`${appBaseUrl}/api/icon/${shop.replace('.myshopify.com', '')}`)
         .then(response => response.json())
         .then(data => {
             if (data.icon_url) {
